@@ -17,6 +17,8 @@ String closestText;
 
 Integrator[] interpolators;
 
+boolean newletter = true;
+
 void setup() {
 
   size(619, 600);
@@ -64,7 +66,7 @@ void setup() {
 
 }
 
-void draw() {
+void draw() {  
 
   background(255);
   image(mapImage, 0, 0);
@@ -72,8 +74,11 @@ void draw() {
   // draw: updated the Integrator with the current values
   // which are either those from the setup() function
   // or those loaded by the target() function issued in updateTable()
-  for(int row = 0; row < rowCount; row++) {
-    interpolators[row].update();
+  if (newletter == true) {
+    for(int row = 0; row < rowCount; row++) {
+      interpolators[row].update();
+    }
+    newletter = false;
   }
 
   closestDist = MAX_FLOAT;
@@ -83,6 +88,7 @@ void draw() {
   fill(192, 0, 0);
   noStroke();
 
+  
   //loop through rows of the locations file and draw points
   for (int row = 0; row < rowCount; row++) {
     String abbrev = dataTable.getRowName(row);
@@ -91,7 +97,7 @@ void draw() {
     // println('location: ' + abbrev + "; x: " +  x + "; y: " + y);
     drawData(x, y, abbrev);
   }
-
+  
   //use global variables set in drawData() to draw text related to closest circle
   if (closestDist != MAX_FLOAT) {
     fill(0);
@@ -121,7 +127,7 @@ void drawData(float x, float y, String abbrev) {
   }
 
   ellipseMode(RADIUS);
-
+  
   //draw an ellipse for this item
   ellipse(x, y, radius, radius);
 
@@ -146,14 +152,17 @@ void drawData(float x, float y, String abbrev) {
 void keyPressed() {
   if (key == ' ') {
     println('key pressed!');
+    newletter = true;
     updateTable();
   }
 }
 
 void updateTable() {
+  
   for (int row = 0; row < rowCount; row++) {
     float newValue = random(-10,10);
     interpolators[row].target(newValue);
-  }
+  }    
+    
   // dataTable = new Table("http://benfry.com/writing/map/random.cgi");
 }
